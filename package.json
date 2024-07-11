@@ -1,0 +1,27 @@
+{
+  "name": "fullstack-blog",
+  "version": "1.0.0",
+  "description": "Blog Fullstack com JavaScript, Node.js, Express e React.js",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "fullstack-blog"
+  },
+  "author": "Lucas Manuel Alface",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "jest": "^29.7.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.10.2",
+    "sequelize": "^6.37.3"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.2"
+  }
+}
