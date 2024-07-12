@@ -6,12 +6,14 @@ const Category = require("./models/categoryModel");
 const routerUser = require("./routers/userController");
 const bodyParser = require("body-parser");
 const routerCategory = require('./routers/categoryController');
+const routerArticles = require('./routers/articleController');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use(routerCategory)
-app.use(routerUser);
+app.use('/',routerCategory)
+app.use('/',routerUser);
+app.use(('/', routerArticles))
 
 app.listen(3000, (error) => {
   if (error) {
