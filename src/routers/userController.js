@@ -3,8 +3,9 @@ const router = express.Router();
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
+const authMiddleware = require('../middlewares/authMiddleware');
 
-router.get("/signup", (req, res) => {
+router.get("/usuardata", authMiddleware, (req, res) => {
   User.findAll()
     .then((users) => {
       if (!users) {
@@ -18,7 +19,7 @@ router.get("/signup", (req, res) => {
     });
 });
 
-let jwtSecret = '%$#%&%$#%&*^(^%&)(_)*'
+let jwtSecret = '%$#%&%$#%&*^(^%&)(_)*';
 
 router.post("/signup", (req, res) => {
   let { firstname, lastname, email, phoneNumber, password } = req.body;
