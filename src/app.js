@@ -13,12 +13,24 @@ app.use(bodyParser.json());
 
 app.use('/',routerCategory)
 app.use('/',routerUser);
-app.use(('/', routerArticles))
+app.use(('/', routerArticles));
 
-app.listen(3000, (error) => {
-  if (error) {
-    console.log("Erro no servidor");
-  } else {
-    console.log("Servidor iniciado");
-  }
-});
+app.get('/', (req, res) => {
+  Article.findAll().then(articles => {
+    res.status(200).json({articles});
+  }).catch(error => {
+    res.status(500).json({error: error.message})
+  })
+})
+
+app.get('/:slug', (req, res) => {
+  Article.findOne({
+    where: {slug: slug}
+  }).then(article => {
+    res.status(200).json({article})
+  }).catch(error => {
+    res.status(404).json({message: error.message})
+  })
+})
+
+module.exports = app;

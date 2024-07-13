@@ -6,16 +6,21 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
 
 router.get('/article', authMiddleware, (req, res) => {
-    Article.findAll({
+
+    Category.findAll().then(categories => {
+         Article.findAll({
         include: [{model: Category}]
     }).then(articles => {
         if(articles) {
-          res.status(200).json({articles})
+          res.status(200).json({articles, categories});
         } else {
             res.status(404).json({message: 'Nenhum artigo no sevidor'})
         } 
     }).catch(error => {
         res.status(500).json({message: 'Erro no servidor: '+error.message})
+    })
+    }).catch(error => {
+        res.status(500).json({messagem: error.message})
     })
 });
 
