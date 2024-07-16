@@ -7,10 +7,12 @@ const routerUser = require("./routers/userController");
 const bodyParser = require("body-parser");
 const routerCategory = require('./routers/categoryController');
 const routerArticles = require('./routers/articleController');
+const cors = require('cors');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+app.use(cors());
 app.use('/',routerCategory)
 app.use('/',routerUser);
 app.use(('/', routerArticles));
@@ -33,4 +35,11 @@ app.get('/:slug', (req, res) => {
   })
 })
 
+app.listen(3000, (error) => {
+  if (error) {
+    console.log("Erro no servidor");
+  } else {
+    console.log("Servidor iniciado");
+  }
+});
 module.exports = app;

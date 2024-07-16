@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-router.get("/usuardata", authMiddleware, (req, res) => {
+router.get("/users", authMiddleware, (req, res) => {
   User.findAll()
     .then((users) => {
       if (!users) {
@@ -21,8 +21,8 @@ router.get("/usuardata", authMiddleware, (req, res) => {
 
 let jwtSecret = '%$#%&%$#%&*^(^%&)(_)*';
 
-router.post("/signup", (req, res) => {
-  let { firstname, lastname, email, phoneNumber, password } = req.body;
+router.post("/user", (req, res) => {
+  let { username, firstname, lastname, email, phoneNumber, password } = req.body;
 
   User.findOne({
     where: { email: email },
@@ -35,6 +35,7 @@ router.post("/signup", (req, res) => {
         let hash = bcrypt.hashSync(password, salt);
 
         User.create({
+          username: username,
           firstname: firstname,
           lastname: lastname,
           email: email,
@@ -52,7 +53,7 @@ router.post("/signup", (req, res) => {
       }
     })
     .catch((err) => {
-      res.status(500).res.json({ error: err.message });
+      res.status(500).json({ error: err.message });
     });
 });
 
@@ -79,5 +80,107 @@ router.post("/signin", (req, res) => {
       res.status(404).json({ error: err.message });
     });
 });
+
+router.get('/user', authMiddleware, (req, res) => {
+  let {id} = req.body;
+  User.findOne().then(user => {
+    res.status(200).json({user})
+  }).catch(error => {
+    res.status(500).json({error: error.message})
+  })
+})
+
+router.put('/user/:id',authMiddleware, (req, res) => {
+  let id = req.params.id;
+  let {username,
+    about,
+    fileUpload,
+    path,
+    firstname,
+    lastname,
+    email,
+    country,
+    streetAddress,
+    phoneNumber,
+    city,
+    region,
+    postalCode,
+    comments,
+    candidates,
+    offers,
+    pushNotifications} = req.body;
+
+  if(username &&
+    about &&
+    fileUpload &&
+    path &&
+    firstname &&
+    lastname &&
+    email &&
+    country &&
+    streetAddress &&
+    phoneNumber &&
+    city &&
+    region &&
+    postalCode &&
+    comments &&
+    candidates &&
+    offers &&
+    pushNotifications) {
+    User.findOne({
+      where: {id: id}
+    }).then(user => {
+      if(user) {
+         User.update({
+          username,
+          about,
+          fileUpload,
+          path,
+          firstname,
+          lastname,
+          email,
+          country,
+          streetAddress,
+          phoneNumber,
+          city,
+          region,
+          postalCode,
+          comments,
+          candidates,
+          offers,
+          pushNotifications,
+    }, {
+      where: {id: id}
+    }).then((user) => {
+      res.status(200).json({user})
+    }).catch(error => {
+      res.status(500).json({message: 'Erro no servidor '+error.message})
+    })
+      } else {
+        res.status(404).json({error: 'Usuario nao encontrado'})
+      }
+    }).catch(error => {
+      res.status(404).json({error: 'Usuario nao encontrado '+error.message})
+    })
+   
+  } else {
+    res.status(401).json({error:'Não autorizado: Todos os campos devem ser preenchidos'})
+  }
+})
+
+router.delete('/user/:id', authMiddleware, (req, res) => {
+  let id = parseInt(req.params.id);
+  if(id) {
+    User.destroy({
+      where: {id: id}
+    }).then(() => {
+      res.status(200).json({message: 'Conta de usuario apagado com sucesso!'})
+    }).catch(error => {
+      res.status(500).json({error: 'Nao foi possivel apagar a sua conta, tente mais tarde '+error.message})
+    })
+  } else {
+    res.status(404).json({error: 'id nao encontrado'})
+  }
+})
 
 module.exports = router;
