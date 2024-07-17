@@ -1,0 +1,11 @@
+{
+    "rules": {
+        "semi": ["error", "always"],
+        "quotes": ["error", "double"]
+    },
+    "extends":[
+        "airbnb-base",
+         "some-other-config-you-use",
+        "prettier"  
+      ] 
+}

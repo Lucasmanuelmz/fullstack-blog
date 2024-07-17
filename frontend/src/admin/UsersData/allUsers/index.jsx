@@ -2,7 +2,7 @@ import axios from "axios";
 import { Fragment, useEffect, useState } from "react";
 import axiosInstance from "../../../axiosInstance/axiosinstance";
 
-export default function SuperUser() {
+export default function MyTime() {
 
     const [userData, setUserData] = useState([]);
     

@@ -30,7 +30,7 @@ router.post('/category', authMiddleware, (req, res) => {
     }
 })
 
-router.get('/category', authMiddleware, (req, res) => {
+router.get('/categories', authMiddleware, (req, res) => {
     Category.findAll().then(categories => {
         if(categories){
             res.status(200).json({categories})
@@ -42,11 +42,25 @@ router.get('/category', authMiddleware, (req, res) => {
     })
 })
 
+router.get('/category', authMiddleware, (req, res) => {
+    Category.findOne().then(category => {
+        if(category){
+            res.status(200).json({category})
+        } else {
+            res.status(404).json({error: 'Nenhuma categoria foi encotrada'})
+        }
+    }).catch(error => {
+        res.status(500).json({error: error.message})
+    })
+})
+
 router.put('/category/:id', authMiddleware, (req, res) => {
     let id = req.params.id;
     let {category} = req.body;
-
-    Category.update({
+    if(!category) {
+        res.status(400).json({message: 'Nao pode cadastrar categoria vazia'})
+    } else {
+          Category.update({
     category: category,
     slug: slugify(category)
      },
@@ -57,11 +71,11 @@ router.put('/category/:id', authMiddleware, (req, res) => {
     }).catch(error => {
         res.status(500).json({message: error.message})
     })
-      
+    }   
 })
 
-router.delete('/category', (req, res) => {
-    let id = req.body.id;
+router.delete('/category/:id', (req, res) => {
+    let id = req.params.id;
     Category.destroy({
         where: {id: id}
     }).then(categoryDelete => {

@@ -1,5 +1,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import GetCategoriesInScreen from '../category/screen'
+import DisplayCategories from '../category/display'
 
 const user = {
   name: 'Tom Cook',
@@ -8,14 +10,15 @@ const user = {
     'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
 const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Equipe', href: '#', current: false },
-  { name: 'Meus artigos', href: '#', current: false },
+  { name: 'Dashboard', href: '/dashboard', current: true },
+  { name: 'Equipe', href: '/time', current: false },
+  { name: 'Novo artigo', href: '/new-article', current: false },
   { name: 'Calendar', href: '#', current: false },
   { name: 'Relatórios', href: '#', current: false },
+  {name: 'Nova categoria', href: 'new-category'}
 ]
 const userNavigation = [
-  { name: 'Seu Perfil', href: '#' },
+  { name: 'Seu Perfil', href: '/myaccount' },
   { name: 'Configurações', href: '#' },
   { name: 'Sair', href: '#' },
 ]
@@ -158,12 +161,19 @@ export default function Dashboard() {
         </Disclosure>
 
         <header className="bg-white shadow">
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="mx-auto flex justify-between items-center max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
+            <GetCategoriesInScreen />
           </div>
         </header>
-        <main>
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">{/* Your content */}</div>
+        <main className='flex'>
+          <aside className='container py-6 px-6 border max-w-max'>
+          <DisplayCategories /> 
+          </aside>
+          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            Texto do corpo
+             
+          </div>
         </main>
       </div>
   )

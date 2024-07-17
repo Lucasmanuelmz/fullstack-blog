@@ -18,10 +18,8 @@ export default function CreateAccount() {
     function handleSubmit() {
       axios.post('http://localhost:3000/user', userAccount)
       .then(response => {
-        if(response.ok) {
-        setInterval(() => {
+        if(response.status === 200) {
           navigate('/dashboard')
-        }, 3000)
         } else {
          <p>Nao foi possivel criar a sua conta</p>
             }
