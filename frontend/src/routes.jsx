@@ -8,14 +8,20 @@ import Dashboard from './admin/dashboard';
 import CreateNewArticle from './admin/articles';
 import MyTime from './admin/UsersData/allUsers';
 import CreateNewCategory from './admin/category';
+import UpdateArticle from './admin/articles/update';
+import UpdateCategory from './admin/category/update';
+import ReadingPage from './public/page';
+import Header from './admin/header';
+import ErrorPage from './error/errorPage';
 
   const routes = ([
     {
       path: "/",
       element: <App />,
+      errorElement: <ErrorPage/>
     },
     {
-      path: '/dashboard',
+      path: '/dashboard/',
       element: <Dashboard />
     },
     {
@@ -39,6 +45,10 @@ import CreateNewCategory from './admin/category';
       path: 'new-article',
       element: <CreateNewArticle />
      },
+    {
+      path: '/article/:id',
+      element: <UpdateArticle />
+    },
      {
       path: 'time',
       element: <MyTime />
@@ -47,6 +57,18 @@ import CreateNewCategory from './admin/category';
       path: 'new-category',
       element: <CreateNewCategory />
      },
+     {
+      path: '/category/:id',
+      element: <UpdateCategory />
+     },
+     {
+      path: '/:slug',
+      element: <ReadingPage />
+     },
+     {
+      path:'header/:slug',
+      element: <Header />
+     }
   ]);
   
  export default routes;

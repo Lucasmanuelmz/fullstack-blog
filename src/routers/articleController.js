@@ -5,7 +5,7 @@ const Category = require('../models/categoryModel');
 const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
 
-router.get('/article', authMiddleware, (req, res) => {
+router.get('/articles', authMiddleware, (req, res) => {
 
     Category.findAll().then(categories => {
          Article.findAll({
@@ -24,22 +24,41 @@ router.get('/article', authMiddleware, (req, res) => {
     })
 });
 
+router.get('/article/:id', authMiddleware, (req, res) => {
+    let id = parseInt(req.params.id);
+    Article.findOne({
+        where: {
+            id: id
+        }
+    }).then(article => {
+        if(article) {
+            res.status(200).json({article})
+        }else {
+            res.status(404).json({message: 'Artigo nao encontrado'})
+        }
+    }).catch(error => {
+        res.status(500).json({message: 'Erro no servidor '+error.message})
+    })
+})
+
 router.post('/article', authMiddleware, (req, res) => {
-    let {title, body } = req.body;
-    if(title && body) {
+    let {title, body, categoryId } = req.body;
+    if(title && body && categoryId) {
     Article.findOne({
         where: {
             title: title,
-            body: body
+            body: body,
+            categoryId: categoryId
         }
     }).then(article => {
         if(article) {
             res.status(302).json({message: 'Este artigo ja existe'})
         } else {
-            Article.create({
+       Article.create({
         title: title,
         body: body,
-        slug: slugify(title)
+        slug: slugify(title),
+        categoryId: categoryId
     }).then(() => {
         res.status(200).json({message: 'Artigo adicionado com sucesso'})
     }).catch(error => {
@@ -89,8 +108,8 @@ router.put('/article/:id', authMiddleware, (req, res) => {
   }
 });
 
-router.delete('/article', authMiddleware, (req, res) => {
-    let id = req.body.id;
+router.delete('/article/:id', authMiddleware, (req, res) => {
+    let id = req.params.id;
     Article.destroy({
         where: {id: id}
     }).then(() => {

@@ -1,72 +1,81 @@
 import { Editor } from "@tinymce/tinymce-react";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
-import axiosInstance from "../../axiosInstance/axiosinstance";
+import {useEffect, useRef, useState } from "react";
+import axiosInstance from "../../../axiosInstance/axiosinstance";
+import { useParams } from "react-router-dom";
 
- export default function CreateNewArticle() {
+ export default function UpdateArticle() {
   const editorRef = useRef(null);
-  const [formData, setFormData] = useState({
-    title: '',
-    body: '',
-    categoryId: ''
-  });
-const [categories, setCategories] = useState([])
+const [article, setArticle] = useState({
+  title: '',
+  body: '',
+  categoryId: ''
+});
+const [categories, setCategories] = useState([]);
+const {id} = useParams()
+
+
 
 useEffect(() => {
-  if(editorRef.current) {
-    editorRef.current.setContent(formData.body)
-  }
-},[formData.body])
-
-  function handleChange(e) {
-    const {name, value} = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    const content = editorRef.current.getContent();
-    const postData = {
-      ...formData,
-      body: content
+async function myCategories() {
+  try{
+    const response = await axios.get('http://localhost:3000/categories', axiosInstance);
+    if(response.status === 200) {
+      const categories = await response.data.categories;
+      setCategories(categories);
     }
-
-    axios.post('http://localhost:3000/article', postData, axiosInstance)
-    .then(res => {
-      console.log(res)
-      if(res.status === 200) {
-        console.log('Artigo guardado com sucesso');
-        setFormData({
-          title: '',
-          body: '',
-          categoryId: ''
-        })
-      }
-    }).catch(error => {
-      console.log('ERRO: '+error.message)
-    })
+  }catch(error) {
+    console.log(error.message)
   }
+}
+myCategories()
 
-  useEffect(() => {
-      async function getCategories() {
-        try{
-          const response = await axios.get('http://localhost:3000/categories', axiosInstance);
-          if(response.status === 200) {
-            const category = await response.data.categories;
-             setCategories(category)
-          }
-        }catch(error) {
+async function getArticleToUpdate() {
+
+    try{
+        const response = await axios.get(`http://localhost:3000/article/${id}`, axiosInstance)
+        if(response.status === 200) {
+            const article = await response.data.article;
+            setArticle(article)
+        }
+    }catch(error) {
         console.log(error.message)
-      }
-      }
-   getCategories()
-},[])
-  return (
+    }
+   
+}
+getArticleToUpdate()
+},[id])
+
+function handleChange(e) {
+  const {name, value} = e.target;
+  setArticle(prev => ({
+    ...prev,
+    [name]: value
+  }))
+}
+
+function handleSubmit(e) {
+  e.preventDefault()
+  const content = editorRef.current.getContent()
+  setArticle(prev => ({
+    ...prev,
+    body: content
+  }))
+  axios.put(`http://localhost:3000/article/${article.id}`, article, axiosInstance)
+  .then(response => {
+    if(response.status === 200) {
+      console.log('Artigo cadastrado com sucesso')
+    }
+  })
+  .catch(error => {
+    console.log(error.message)
+  })
+}
+
+return (
     <form onSubmit={handleSubmit} className="container mx-auto max-w-7xl py-5">
-      
+      {article?(
+        <>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Título do Artigo:</h2>
@@ -78,7 +87,7 @@ useEffect(() => {
           <p className="mt-1 text-sm leading-6 text-gray-600">
           Este é o espaço onde você desenvolve o conteúdo do seu artigo. Você pode escrever parágrafos, adicionar listas, inserir imagens, e qualquer outro elemento que enriqueça o seu texto.
           </p>
-
+         
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-4">
               <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
@@ -89,7 +98,7 @@ useEffect(() => {
                   <input
                     id="title"
                     name="title"
-                    value={formData.title}
+                    value={article.title}
                     onChange={handleChange}
                     type="text"
                     placeholder="Digite o titulo do seu artigo"
@@ -101,60 +110,49 @@ useEffect(() => {
             </div>
 
             <div className="col-span-full">
-              <span className="block text-sm font-medium leading-6 text-gray-900">
+              <label htmlFor="about" className="block text-sm font-medium leading-6 text-gray-900">
                 Corpo do artigo
-              </span>
+              </label>
               <div className="mt-2">
               <Editor
           apiKey='8d1v1qdgpz4dpvymqmk87cec15ji2wiho2yme8ue8qg2432o'
           onInit={(_evt, editor) => editorRef.current = editor}
-          initialValue="<p>Digite o seu artigo neste espaco.</p>"
-          value={formData.body}
+          initialValue={article.body || "<p>Digite o seu artigo neste espaco.</p>"}
           init={{
             height: 500,
             menubar: false,
+
             plugins: [
               'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
               'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
               'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
             ],
-            content_style: `
-            body { 
-            font-family:Helvetica,Arial,sans-serif; font-size:14px }
-            p {
-              margin-top: 1.5rem;
-              font-size: 1.125rem;
-              font-height: 1.75rem;
-              line-heght: 2rem;
-              color: rgb(75.85.99)
-            }
-              div {
-              margin-left: auto;
-              margin-rigth: auto;
-              max-width: 42rem;
-              }
-            `
+            toolbar: 'undo redo | blocks | ' +
+              'bold italic forecolor | alignleft aligncenter ' +
+              'alignright alignjustify | bullist numlist outdent indent | ' +
+              'removeformat | help',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
           }}
-        />
-        <p className="mx-auto max-w-2xl lg:text-center"></p>
+        /> 
+        
               </div>
             </div>
            </div>
            </div>
+          
            </div>
-
+       
             <div className="sm:col-span-3">
-              <span className="block text-sm font-medium leading-6 text-gray-900">
+              <label htmlFor="country" className="block text-sm font-medium leading-6 text-gray-900">
                 Categorias
-              </span>
+              </label>
               <div className="mt-2">
                 {categories.length > 0? (
                 <select
                   id="category"
                   name="categoryId"
-                  value={formData.categoryId}
-                  onChange={handleChange}
                   autoComplete="category-name"
+                  onChange={handleChange}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 > 
                 {categories.map((category) => ( 
@@ -174,7 +172,10 @@ useEffect(() => {
           guardar artigo
         </button>
       </div>
-     
+      </>
+     ): (
+        <p>Nenhum artigo encontrado</p>
+     )}
     </form>
   )
 }

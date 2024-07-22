@@ -15,7 +15,7 @@ export default function LoginPage() {
 
     function handleSubmit(e) {
         e.preventDefault();
-        axios.post('http://localhost:3000/signin', user)
+        axios.post('http://localhost:3000/sign', user)
         .then(response => {
             let token = response.data.token;
             localStorage.setItem('token', token); 

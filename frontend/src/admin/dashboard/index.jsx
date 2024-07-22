@@ -2,6 +2,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import GetCategoriesInScreen from '../category/screen'
 import DisplayCategories from '../category/display'
+import DisplayArticle from '../articles/display'
 
 const user = {
   name: 'Tom Cook',
@@ -171,7 +172,8 @@ export default function Dashboard() {
           <DisplayCategories /> 
           </aside>
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            Texto do corpo
+            <h1>Links de artigos</h1>
+            <DisplayArticle/>
              
           </div>
         </main>

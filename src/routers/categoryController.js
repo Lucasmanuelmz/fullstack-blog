@@ -42,8 +42,13 @@ router.get('/categories', authMiddleware, (req, res) => {
     })
 })
 
-router.get('/category', authMiddleware, (req, res) => {
-    Category.findOne().then(category => {
+router.get('/category/:id', authMiddleware, (req, res) => {
+    let id = req.params.id;
+    Category.findOne(
+        {
+            where: {id: id}
+        }
+    ).then(category => {
         if(category){
             res.status(200).json({category})
         } else {

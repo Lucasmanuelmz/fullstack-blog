@@ -1,13 +1,30 @@
 import axios from "axios";
-import {useState } from "react"
+import {useEffect, useState } from "react"
 import axiosInstance from "../../../axiosInstance/axiosinstance";
+import { useParams } from "react-router-dom";
 
-export default function CategoryUpdate({updateCategory, categoryId}) {
-    const [update, setUpdate] = useState({category: updateCategory});
+export default function UpdateCategory() {
+    const [update, setUpdate] = useState({category: ''});
+    const {id} = useParams()
+
+    useEffect(() => {
+        async function getCategory() {
+            try{
+                const response = await axios.get(`http://localhost:3000/category/${id}`, axiosInstance)
+                if(response.status === 200) {
+                    const category = await response.data.category;
+                    setUpdate(category)
+                }
+            }catch(error) {
+                console.log(error.message)
+            }
+        }
+        getCategory()
+    },[id])
      
    function handleUpdate(e) {
         e.preventDefault()
-        axios.put(`http://localhost:3000/category/${categoryId}`, update, axiosInstance)
+        axios.put(`http://localhost:3000/category/${update.id}`, update, axiosInstance)
         .then((update) => {
             if(update.status === 200) {
                  console.log('Categoria atualizada com sucesso!')
